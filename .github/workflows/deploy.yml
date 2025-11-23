@@ -1,0 +1,41 @@
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+name: React CI/CD
+ 
+on: 
+  push:
+    branches:
+        - main
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: checkout code
+              uses: actions/checkout@v4
+            - name: setup node
+              uses: actions/setup-node@v4
+              with:
+                node-version: 18
+            - name: Install dependencies
+              run: npm install
+            - name: Run Tests
+              run: npm test
+            - name: Build
+              run: npm run build
+            - name: Upload build folder for Pages
+              uses: actions/upload-pages-artifact@v3
+              with:
+                path: build/
+    deploy:
+        needs: build
+        runs-on: ubuntu-latest
+        steps:
+            - name: Deploy to GitHub Pages
+              uses: actions/deploy-pages@v4
+
+
+
