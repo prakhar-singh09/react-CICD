@@ -1,38 +1,26 @@
 pipeline {
-  agent any
-
-  stages {
-    stage('Checkout') {
-      steps {
-        checkout scm
-      }
-    }
-
-    stage('Install Node') {
-      steps {
-        sh 'npm install'
-      }
-    }
-
-    stage('Test') {
-      steps {
-        sh 'npm test'
-      }
-    }
-
-    stage('Build') {
-      steps {
-        sh 'npm run build'
-      }
+  agent {
+    docker {
+      image 'node:18'
+      args '-u root:root'
     }
   }
 
-  post {
-    success {
-      echo 'Build succeeded!'
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
     }
-    failure {
-      echo 'Build failed!'
+
+    stage('Install') {
+      steps { sh 'npm install' }
+    }
+
+    stage('Test') {
+      steps { sh 'npm test' }
+    }
+
+    stage('Build') {
+      steps { sh 'npm run build' }
     }
   }
 }
